@@ -375,3 +375,22 @@ def humanbytes(size):
         size /= power
         n += 1
     return str(round(size, 2)) + " " + Dic_powerN[n] + 'B'
+
+from pyrogram.errors import UserNotParticipant
+from pyrogram.types import Message
+from info import REQ_CHANNEL
+
+async def force_join(client, message: Message) -> bool:
+    """
+    Check if a user has joined the required channel.
+    Returns True if user is a member, False otherwise.
+    """
+    try:
+        member = await client.get_chat_member(REQ_CHANNEL, message.from_user.id)
+        if member.status in ["member", "administrator", "creator"]:
+            return True
+        return False
+    except UserNotParticipant:
+        return False
+    except Exception:
+        return False
